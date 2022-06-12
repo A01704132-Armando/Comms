@@ -2,7 +2,8 @@
 // File: Bill.h
 // Author: José Armando Rosas Balderas - A01704132
 // Date: 29/05/2022
-// Description: This file implements some functions.
+// Description: This file implements some functions. And it is
+// a class that plays the role of a bill.
 // =========================================================
 
 #ifndef BILL_H_INCLUDED
