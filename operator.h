@@ -4,7 +4,7 @@
 // Date: 1/06/2022
 // Description: This file implements some functions. And it
 //is a class that plays the role of an operator.
-//Is the parent class of Voxoperator and InternetOperator
+//Is the parent class of VoxOperator and InternetOperator
 // =========================================================
 
 #ifndef OPERATOR_H_INCLUDED
