@@ -1,11 +1,14 @@
 // =========================================================
 // File: customer.h
-// Author:
-// Date:
-// Description:
+// Author: José Armando Rosas Balderas
+// Date: 13/06/2022
+// Description: This file implements some functions. And it
+//is a class that plays the role of a customer.
+//Include the class operator and bill
 // =========================================================
-#ifndef CUSTOMER_H
-#define CUSTOMER_H
+
+#ifndef CUSTOMER_H_INCLUDED
+#define CUSTOMER_H_INCLUDED
 
 #include <string>
 #include <sstream>
@@ -44,4 +47,102 @@ public:
   void pay(double);
 };
 
-#endif
+Customer :: Customer(int identificacion, std::string nombre, int edad,
+                      Operator *o, double limite_Credito){
+    id = identificacion;
+    name = nombre;
+    age = edad;
+    op = o;
+    bill = new Bill(limite_Credito);
+    totalSpentTalkingTime = 0;
+    totalMessageSent= 0;
+    totalInternetUsage = 0;
+
+}
+Customer :: Customer(const Customer &other){}
+
+Customer:: ~Customer(){
+    delete bill;
+    bill = 0;
+
+}
+
+int Customer:: getId() const {
+    return id;
+}
+int  Customer:: getAge() const{
+    return age;
+}
+int  Customer::getTotalSpentTalkingTime() const{
+    return totalSpentTalkingTime;
+}
+int  Customer::getTotalMessageSent() const{
+    return totalMessageSent;
+}
+double Customer::getTotalInternetUsage() const{
+    return totalInternetUsage;
+}
+std::string Customer::getName() const {
+    return name;
+}
+Operator* Customer::getOperator() const{
+    return op;
+}
+Bill* Customer::getBill() const {
+    return bill;
+}
+void Customer:: setOperator(Operator* o){
+    op = o;
+}
+
+std::string Customer:: toString() const {
+    std::stringstream aux;
+    aux << "Customer "<<getId() <<std::fixed<<std::setprecision(2)
+    << bill->getTotalMoneySpent()<< bill->getCurrentDebt();
+
+    return aux.str();
+}
+
+void Customer ::talk(int minutes, Customer &other){
+    double CostoLlamada = 0;
+    if(minutes >0 && id != other.getId()){
+        CostoLlamada = minutes * op->getTalkingChage();
+    }
+    if (bill->getLimitAmount() > 0){
+        bill->add(CostoLlamada);
+        totalSpentTalkingTime += minutes;
+        op->addTalkingTime(minutes);
+    }
+
+}
+void Customer::message(int quantity, const Customer &other){
+    double CostoMensajes = 0;
+    if(quantity>0 && id != other.getId()){
+        CostoMensajes = quantity * op->getMessageCost();
+    }
+    if(bill->getLimitAmount() > 0){
+        bill->add(CostoMensajes);
+        totalMessageSent += quantity;
+        op->addTotalMessageSent(quantity);
+    }
+}
+void Customer::connection(double amount){
+    double costoInternet;
+    if(amount> 0){
+        costoInternet = amount * op->getNetworkCharge();
+    }
+    if(bill->getLimitAmount()>0){
+        bill->add(costoInternet);
+        totalInternetUsage += amount;
+        op->addTotalInternetUsage(amount);
+    }
+}
+void Customer::pay(double pago){
+    if(pago<= bill->getCurrentDebt()){
+        bill->pay(pago);
+    }
+    bill->pay(bill->getCurrentDebt());
+
+}
+
+#endif // CUSTOMER_H_INCLUDED
