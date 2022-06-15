@@ -105,36 +105,45 @@ std::string Customer:: toString() const {
 
 void Customer ::talk(int minutes, Customer &other){
     double CostoLlamada = 0;
+
     if(minutes >0 && id != other.getId()){
-        CostoLlamada = minutes * op->getTalkingChage();
-    }
-    if (bill->getLimitAmount() > 0){
-        bill->add(CostoLlamada);
-        totalSpentTalkingTime += minutes;
-        op->addTalkingTime(minutes);
+        CostoLlamada = op->calculateTalkingCost(minutes, age);
+
+        if (bill->getLimitAmount() >= CostoLlamada ){
+            bill->add(CostoLlamada);
+            totalSpentTalkingTime += minutes;
+            op->addTalkingTime(minutes);
+
+            if(op->getId() != other.getOperator()->getId()){
+                other.getOperator()->addTalkingTime(minutes);
+            }
     }
 
 }
+}
+
 void Customer::message(int quantity, const Customer &other){
     double CostoMensajes = 0;
     if(quantity>0 && id != other.getId()){
-        CostoMensajes = quantity * op->getMessageCost();
+        CostoMensajes = op->calculateMessageCost(quantity, id, other.getOperator()->getId());
+
+        if(bill->getLimitAmount() >= CostoMensajes){
+            bill->add(CostoMensajes);
+            totalMessageSent += quantity;
+            op->addTotalMessageSent(quantity);
     }
-    if(bill->getLimitAmount() > 0){
-        bill->add(CostoMensajes);
-        totalMessageSent += quantity;
-        op->addTotalMessageSent(quantity);
     }
 }
 void Customer::connection(double amount){
     double costoInternet;
     if(amount> 0){
-        costoInternet = amount * op->getNetworkCharge();
-    }
-    if(bill->getLimitAmount()>0){
+        costoInternet = op->calculateNetworkCost(amount);
+
+    if(bill->getLimitAmount()>= costoInternet){
         bill->add(costoInternet);
         totalInternetUsage += amount;
         op->addTotalInternetUsage(amount);
+    }
     }
 }
 void Customer::pay(double pago){
